@@ -6,10 +6,13 @@
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "setup:hooks": "husky install"
   },
   "keywords": [
-    "webmentions"
+    "webmentions",
+    "indieweb",
+    "mentions"
   ],
   "author": "Michael Walter Van Der Velden <mikevdv@vandie.co.uk> (https://mikevdv.dev)",
   "license": "MIT",

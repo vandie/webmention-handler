@@ -84,6 +84,13 @@ export class WebMentionHandler implements IWebMentionHandler{
     // we should delete any stored version of the webmention as per the specification
     if(error || !html || status === 410) return this.storageHandler.deleteMention(mention);
     const microformats = parseHtml(html, mention.source);
+    let mentionedUrls = microformats.find(({type}) => type && type.includes("h-mention-of"));
+    // If the page does not include any mention of the target, then delete any previously
+    // acknowledged mentions and retun null;
+    if(!mentionedUrls || !mentionedUrls.properties['mention-of'].includes(mention.target)) {
+      return this.storageHandler.deleteMention(mention);
+    }
+
     return null;
   }
 
