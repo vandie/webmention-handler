@@ -1,0 +1,32 @@
+import { getHtmlLinks } from "./get-html-links.function";
+
+describe('getHtmlLinks', () => {
+  it('correctly grabs all links in a html document', () => {
+    const html = `<html><body>
+      <div>
+      <section id="example"><p>this is a <a href="http://example.com">link</a></p></section>
+      <a href="http://example.com/link2">link2</a>
+      </div>
+      <a href="http://example.com/link3">link3</a>
+      <a>Invalid a tag</a>
+      </body></html>`;
+
+    expect(getHtmlLinks(html)).toEqual([
+      'http://example.com',
+      'http://example.com/link2',
+      'http://example.com/link3'
+    ])
+  });
+
+  it('returns an empty array if no valid links are found', () => {
+    const html = `<html><body>
+    <div>
+    <section id="example"><p>this is no link</p></section>
+    <button href="http://example.com/link2">link2</button>
+    </div>
+    <span>link3</span>
+    <a>Invalid a tag</a>
+    </body></html>`
+    expect(getHtmlLinks(html)).toEqual([])
+  });
+})

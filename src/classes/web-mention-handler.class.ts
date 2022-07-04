@@ -10,20 +10,36 @@ import { LocalWebMentionStorage } from "./local-web-mention-storage.class";
 
 export class WebMentionHandler implements IWebMentionHandler{
   storageHandler: IWebMentionStorage;
+  supportedHosts: string[]
   requiredProtocol?: string;
+  whitelist?: string[];
+  blacklist?: string[];
   
-  constructor(options: WebMentionOptions = {}) {
+  constructor(options: WebMentionOptions) {
     if(!options?.storageHandler) options.storageHandler = new LocalWebMentionStorage();
     this.storageHandler = options.storageHandler;
+    this.supportedHosts = options.supportedHosts;
     this.requiredProtocol = options.requiredProtocol;
+    this.whitelist = options.whitelist;
+    this.blacklist = options.blacklist;
   }
 
+  /**
+   * Adds a new pending web mention to be handled
+   */
   async addPendingMention(source: string, target: string): Promise<SuggestedResponse> {
     if(!isUrl(source)) throw new Error('Source must be a valid Url');
     if(!isUrl(target)) throw new Error('Target must be a valid Url');
 
     const sourceUrl = new URL(source);
     const targetUrl = new URL(target);
+
+    /** Optional support for white/blacklisted domains */
+    if(this.whitelist && !this.whitelist.includes(sourceUrl.host)) throw new Error('Source is not on whitelist.');
+    if(this.blacklist && this.blacklist.includes(sourceUrl.host)) throw new Error('Source is not on whitelist.');
+
+    /** Stops mentions of urls that are not under your control */
+    if(!this.supportedHosts.includes(targetUrl.host)) throw new Error('Unsupported Target');
 
     // Acording to the spec, you can require a given protocol for urls (Recomendation is https)
     if(this.requiredProtocol && sourceUrl.protocol !== this.requiredProtocol+':'){
@@ -56,6 +72,10 @@ export class WebMentionHandler implements IWebMentionHandler{
     }
   }
 
+  /**
+   * Converts a pending webmention to a parsed webmention by fetching the information from the source
+   * server
+   */
   async processMention(mention: QueuedMention): Promise<Mention | null> {
     const html = await fetchHtml(mention.source);
     if(html === false) return null;
@@ -63,12 +83,18 @@ export class WebMentionHandler implements IWebMentionHandler{
     return null;
   }
 
+  /**
+   * Calls processMention on a collection of pending webmentions
+   */
   async processPendingMentions(): Promise<Mention[]> {
     const mentions = await this.storageHandler.getNextPendingMentions();
     const validateMentions = await Promise.all(mentions.map(mention => this.processMention(mention)));
     return validateMentions.filter(Boolean as any);
   }
 
+  /**
+   * Grabs a list of parsed webmentions for a given page. Optionally filter by mention type.
+   */
   getMentionsForPage(page: string, type?: string | undefined): Promise<Mention[]> {
     return this.storageHandler.getMentionsForPage(page, type);
   }

@@ -52,7 +52,7 @@ app.post('/webmentions', async function(req, res) {
 // open your express server
 app.listen(8080);
 ```
-You should then run the following function on a cron/timed-lambda. It will convert pending mentionNotifications into mention objects in your database that you can use.
+You should then run the following function on a cron/timed-lambda. It will convert pending mentionNotifications into mention objects in your database that you can use. I'd highly recommend running this small bit of code in an ephemeral cloud function so that you don't accidentally leak the IP of your server.
 ```typescript
 import webMentionHandler from 'path/to/your/webMentionHandler/file.ts';
 
@@ -77,5 +77,5 @@ The following functions must be implemented in your storage handler class if you
 | -------- | --------- | ------- | ----- | ----------- |
 | `addPendingMention` | mention: [QueuedMention](./src/types/queued-mention.type.ts) | [QueuedMention](./src/types/queued-mention.type.ts) | `true` | Allows the web mention handler to add a new pending mention that needs to be handled |
 | `getNextPendingMentions` | N/A | [QueuedMention](./src/types/queued-mention.type.ts)[] | `true` | Fetches a number of pending mentions to be bulk processed. Any configured limits on the number of pending mentions to fetch should be set in the constructor via an options object rather than passed in to this function directly. |
-| `getMentionsForPage` | page: `string`, type?: `string` | [Mention](./src/types/mention.type.ts)[] | `true` | Gets mentions based on a given page key. Has an optional `type` parameter that allows mentions to be filtered on type. eg. Only Comments or Likes` |
-| `storeMentionForPage` | page: `string`, mention: [Mention](./src/types/mention.type.ts) | [Mention](./src/types/mention.type.ts) | `true` | This function will store a mention on the given page key. If you need to access the type of the mention, you can find that on the `mention.type` property. |
+| `getMentionsForPage` | page: `string`, type?: `string` | [Mention](./src/types/mention.type.ts)[] | `true` | Gets mentions based on a given target. Has an optional `type` parameter that allows mentions to be filtered on type. eg. Only Comments or Likes` |
+| `storeMentionForPage` | page: `string`, mention: [Mention](./src/types/mention.type.ts) | [Mention](./src/types/mention.type.ts) | `true` | This function will store a mention on the given target. If you need to access the type of the mention, you can find that on the `mention.type` property. |

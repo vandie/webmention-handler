@@ -3,4 +3,7 @@ import { IWebMentionStorage } from "@app/interfaces/web-mention-storage.interfac
 export type WebMentionOptions = {
   requiredProtocol?: string;
   storageHandler?: IWebMentionStorage;
+  whitelist?: string[];
+  blacklist?: string[];
+  supportedHosts: string[];
 }
