@@ -16,7 +16,7 @@ import { localWebMentionStorage } from 'webmention-handler';
 
 const storage = new LocalWebMentionStorage();
 ```
-Different storage implementations may take different parameters so please read the documentation for the chosen implementation. With that, however, you can create an instance of your the webmention handler. that can be done like so:
+Different storage implementations may take different parameters so please read the documentation for the chosen implementation. With that, however, you can create an instance of your the webmention handler.
 ```typescript
 import { WebMentionHandler } from 'webmention-handler';
 
@@ -29,7 +29,7 @@ export const webMentionHandler = new WebMentionHandler(options)
 ```
 
 ## Usage
-Example Express Endpoint
+Example Express Endpoint to accept web mentions
 ```typescript
 //Regular express setup
 import express from 'express';
@@ -56,14 +56,15 @@ app.post('/webmentions', async function(req, res) {
 // open your express server
 app.listen(8080);
 ```
-You should then run the following function on a cron/timed-lambda. It will convert pending mentionNotifications into mention objects in your database that you can use. I'd highly recommend running this small bit of code in an ephemeral cloud function so that you don't accidentally leak the IP of your server.
+Once your endpoint is set up, you can set up a regular job with the following code to convert pending mentionNotifications into mention objects in your database that you can use.
 ```typescript
 import webMentionHandler from 'path/to/your/webMentionHandler/file.ts';
 
-await webMentionHandler.processPendingMentions();
+setInterval(() => webMentionHandler.processPendingMentions(), 300000);
 ```
+I'd highly recommend processing mentions in an ephemeral cloud function, rather than a setInterval on your main node application, so that you don't accidentally leak the IP of your server to third parties. Especially if you aren't using the `whitelist` option for source hosts.
 
-You can now use your mentions by grabbing the type of mention that you need for a given page.
+You can now grab the type of mention that you need for any given page.
 ```typescript
 import webMentionHandler from 'path/to/your/webMentionHandler/file.ts';
 

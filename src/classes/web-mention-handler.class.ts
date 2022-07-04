@@ -1,3 +1,4 @@
+import { convertHEntryToMention } from "@app/functions/convert-h-entry-to-mention";
 import { fetchHtml } from "@app/functions/fetch-html.function";
 import { isUrl } from "@app/functions/is-url.function";
 import { parseHtml } from "@app/functions/parse-html.function";
@@ -74,24 +75,25 @@ export class WebMentionHandler implements IWebMentionHandler{
   }
 
   /**
-   * Converts a pending webmention to a parsed webmention by fetching the information from the source
+   * Converts a pending webmention to a set of parsed webmentions by fetching the information from the source
    * server
    */
-  async processMention(mention: QueuedMention): Promise<Mention | null> {
+  async processMention(mention: QueuedMention): Promise<Mention[] | null> {
     const {html, status, error} = await fetchHtml(mention.source);
     // A status of 410 indicates that the webmention that previously existed was deleted
     // If we got an error or there was no html body, then the source is invalid and
     // we should delete any stored version of the webmention as per the specification
     if(error || !html || status === 410) return this.storageHandler.deleteMention(mention);
-    const microformats = parseHtml(html, mention.source);
-    let mentionedUrls = microformats.find(({type}) => type && type.includes("h-mention-of"));
+    const hEntries = parseHtml(html, mention.source, mention.target);
+    let mentionedUrls = hEntries.find(({type}) => type && type.includes("mention-of"));
     // If the page does not include any mention of the target, then delete any previously
     // acknowledged mentions and retun null;
-    if(!mentionedUrls || !mentionedUrls.properties['mention-of'].includes(mention.target)) {
-      return this.storageHandler.deleteMention(mention);
-    }
+    if(!mentionedUrls) return this.storageHandler.deleteMention(mention);
 
-    return null;
+    let mentions = hEntries.map(h => convertHEntryToMention(h, mention.source, mention.target));
+    if(mentions.length > 1) mentions = mentions.filter(m => m.type !== 'mention');
+    const storedMentions = mentions.map(m => this.storageHandler.storeMentionForPage(m.target, m));
+    return Promise.all(storedMentions);
   }
 
   /**
@@ -100,7 +102,9 @@ export class WebMentionHandler implements IWebMentionHandler{
   async processPendingMentions(): Promise<Mention[]> {
     const mentions = await this.storageHandler.getNextPendingMentions();
     const validateMentions = await Promise.all(mentions.map(mention => this.processMention(mention)));
-    return validateMentions.filter(Boolean as any);
+    const filteredBadResponses = validateMentions.filter(Boolean as any) as Mention[][];
+    const flattened = filteredBadResponses.reduce((acc, mentions) => [...acc, ...mentions], [] as Mention[]);
+    return flattened;
   }
 
   /**

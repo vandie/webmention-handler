@@ -8,13 +8,19 @@ describe('getHEntries', () => {
     const testHtml = fs.readFileSync(path.join(__dirname, '../test-data/html-reply.html'), 'utf8');
     const dom = htmlParser(testHtml);
     const comment = [{"type":["h-entry"],"properties":{"in-reply-to":["http://example.com/note123"],"name":["Good point! Now what is the next thing we should do?"],"content":["Good point! Now what is the next thing we should do?"]}}];
-    expect(getHEntries(dom, 'http://example.com')).toEqual(comment);
+    expect(getHEntries(dom, 'http://example.com', 'http://example.com/note123')).toEqual(comment);
   });
 
   it('should parse replies with an author', () => {
     const testHtml = fs.readFileSync(path.join(__dirname, '../test-data/html-reply-with-author.html'), 'utf8');
     const dom = htmlParser(testHtml);
     const comment = [{"properties": {"author": [{"properties": {"name": [""], "photo": ["http://mysite.example.org/icon.jpg"], "url": ["http://mysite.example.org"]}, "type": ["h-card"], "value": ""}], "content": ["Good point! Now what is the next thing we should do?"], "in-reply-to": ["http://example.com/note123"], "name": ["Good point! Now what is the next thing we should do?"]}, "type": ["h-entry"]}];
-    expect(getHEntries(dom, 'http://example.com')).toEqual(comment);
+    expect(getHEntries(dom, 'http://example.com', 'http://example.com/note123')).toEqual(comment);
+  });
+
+  it('should ignore replies to a different target', () => {
+    const testHtml = fs.readFileSync(path.join(__dirname, '../test-data/html-reply-with-author.html'), 'utf8');
+    const dom = htmlParser(testHtml);
+    expect(getHEntries(dom, 'http://mysite.example.org', 'http://example.com/note124')).toEqual([]);
   });
 })
