@@ -6,4 +6,5 @@ export type WebMentionOptions = {
   whitelist?: string[];
   blacklist?: string[];
   supportedHosts: string[];
+  stripQueryParameters?: boolean;
 }

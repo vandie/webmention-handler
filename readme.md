@@ -1,9 +1,6 @@
 # webmention-handler
 `webmention-handler` is a nodejs handler for the 2017 W3C Recomendation Spec of [webmentions](https://www.w3.org/TR/webmention/). Written in TypesScript and including full type definitions.
 
-## Should I use this package
-No, not right now. It's still technically an in-dev and shouldn't even really be considered a release.
-
 ## What is a webmention
 A Webmention is a notification that one URL links to another. For example, Alice writes an interesting post on her blog. Bob then writes a response to her post on his own site, linking back to Alice's original post. Bob's publishing software sends a Webmention to Alice notifying that her article was replied to, and Alice's software can show that reply as a comment, like, repost or other relevant type on the original post.
 

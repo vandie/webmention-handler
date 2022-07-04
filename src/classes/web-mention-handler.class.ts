@@ -16,6 +16,7 @@ export class WebMentionHandler implements IWebMentionHandler{
   requiredProtocol?: string;
   whitelist?: string[];
   blacklist?: string[];
+  stripQueryParameters: boolean;
   
   constructor(options: WebMentionOptions) {
     if(!options?.storageHandler) options.storageHandler = new LocalWebMentionStorage();
@@ -24,6 +25,7 @@ export class WebMentionHandler implements IWebMentionHandler{
     this.requiredProtocol = options.requiredProtocol;
     this.whitelist = options.whitelist;
     this.blacklist = options.blacklist;
+    this.stripQueryParameters = options.stripQueryParameters || false;
   }
 
   /**
@@ -62,6 +64,8 @@ export class WebMentionHandler implements IWebMentionHandler{
 
     // Acording to the spec target Url fragment identifiers are to be ignored but not source urls
     targetUrl.hash = '';
+
+    if(this.stripQueryParameters) targetUrl.search = '';
     
     // TODO: add support for returning a mention status url
     // hence the currently unused queued object
