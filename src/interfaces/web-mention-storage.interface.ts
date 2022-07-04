@@ -1,5 +1,5 @@
-import { Mention } from "@app/types/mention.type";
-import { QueuedMention } from "@app/types/queued-mention.type";
+import { Mention } from "../types/mention.type";
+import { QueuedMention } from "../types/queued-mention.type";
 
 export interface IWebMentionStorage {
   addPendingMention(mention: QueuedMention): Promise<QueuedMention>;

@@ -12,10 +12,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
-    "baseUrl": ".",
-    "paths": {
-      "@app/*": ["src/*"],
-    }
+    "baseUrl": "."
   },
   "exclude": ["node_modules", "dist"]
 }

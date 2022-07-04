@@ -1,4 +1,4 @@
-import { Mention } from "@app/types/mention.type";
+import { Mention } from "../types/mention.type";
 import { isOnlyOneEmoji } from "./is-single-emoji.function";
 
 export function convertHEntryToMention(entry: any, source: string, target: string): Mention {

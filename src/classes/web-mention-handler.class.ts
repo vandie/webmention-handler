@@ -1,13 +1,13 @@
-import { convertHEntryToMention } from "@app/functions/convert-h-entry-to-mention";
-import { fetchHtml } from "@app/functions/fetch-html.function";
-import { isUrl } from "@app/functions/is-url.function";
-import { parseHtml } from "@app/functions/parse-html.function";
-import { IWebMentionHandler } from "@app/interfaces/web-mention-handler.interface";
-import { IWebMentionStorage } from "@app/interfaces/web-mention-storage.interface";
-import { Mention } from "@app/types/mention.type";
-import { QueuedMention } from "@app/types/queued-mention.type";
-import { SuggestedResponse } from "@app/types/suggested-response.type";
-import { WebMentionOptions } from "@app/types/web-mention-options.type";
+import { convertHEntryToMention } from "../functions/convert-h-entry-to-mention";
+import { fetchHtml } from "../functions/fetch-html.function";
+import { isUrl } from "../functions/is-url.function";
+import { parseHtml } from "../functions/parse-html.function";
+import { IWebMentionHandler } from "../interfaces/web-mention-handler.interface";
+import { IWebMentionStorage } from "../interfaces/web-mention-storage.interface";
+import { Mention } from "../types/mention.type";
+import { QueuedMention } from "../types/queued-mention.type";
+import { SuggestedResponse } from "../types/suggested-response.type";
+import { WebMentionOptions } from "../types/web-mention-options.type";
 import { LocalWebMentionStorage } from "./local-web-mention-storage.class";
 
 export class WebMentionHandler implements IWebMentionHandler{

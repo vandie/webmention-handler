@@ -1,6 +1,6 @@
-import { IWebMentionStorage } from "@app/interfaces/web-mention-storage.interface";
-import { Mention } from "@app/types/mention.type";
-import { QueuedMention } from "@app/types/queued-mention.type";
+import { IWebMentionStorage } from "../interfaces/web-mention-storage.interface";
+import { Mention } from "../types/mention.type";
+import { QueuedMention } from "../types/queued-mention.type";
 
 export class LocalWebMentionStorage implements IWebMentionStorage {
   private queue: Set<QueuedMention>;
