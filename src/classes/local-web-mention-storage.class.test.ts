@@ -7,12 +7,12 @@ describe('LocalWebMentionStorage', () => {
 
   describe('addPendingMention', () => {
     it('correctly adds a pending mention', async () => {
-      expect((localWebMentionStorage as any).queue).toEqual([]);
+      expect([...(localWebMentionStorage as any).queue]).toEqual([]);
       await localWebMentionStorage.addPendingMention({
         source: 'http://example.com/example',
         target: 'http://example.org/example'
       });
-      expect((localWebMentionStorage as any).queue).toEqual([{
+      expect([...(localWebMentionStorage as any).queue]).toEqual([{
         source: 'http://example.com/example',
         target: 'http://example.org/example'
       }]);
@@ -27,9 +27,9 @@ describe('LocalWebMentionStorage', () => {
           target: 'http://example.org/example'
         });
       }
-      expect((localWebMentionStorage as any).queue.length).toEqual(10);
+      expect((localWebMentionStorage as any).queue.size).toEqual(10);
       const mentions = await localWebMentionStorage.getNextPendingMentions();
-      expect((localWebMentionStorage as any).queue.length).toEqual(0);
+      expect((localWebMentionStorage as any).queue.size).toEqual(0);
       expect(mentions.length).toEqual(10);
       for(let i = 0; i < 10; i++) {
         expect(mentions[i]).toEqual({

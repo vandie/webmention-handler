@@ -17,7 +17,7 @@ export class LocalWebMentionStorage implements IWebMentionStorage {
   }
 
   async getNextPendingMentions() {
-    const q = [...this.queue.values()];
+    const q = [...this.queue];
     this.queue.clear();
     return q;
   }
