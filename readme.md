@@ -1,7 +1,10 @@
 # webmention-handler
 `webmention-handler` is a nodejs handler for the 2017 W3C Recomendation Spec of [webmentions](https://www.w3.org/TR/webmention/). Written in TypesScript and including full type definitions.
 
-## instilation
+## What is a webmention
+A Webmention is a notification that one URL links to another. For example, Alice writes an interesting post on her blog. Bob then writes a response to her post on his own site, linking back to Alice's original post. Bob's publishing software sends a Webmention to Alice notifying that her article was replied to, and Alice's software can show that reply as a comment, like, repost or other relevant type on the original post.
+
+## Installation
 Install with npm
 ```bash
 npm install webmention-handler --save
@@ -18,6 +21,7 @@ Different storage implementations may take different parameters so please read t
 import { WebMentionHandler } from 'webmention-handler';
 
 const options = {
+  supportedHosts: ['localhost'] // The domain of any websites this handler should support
   storageHandler: storage, // pass in your storage handler instance
   requiredProtocol: 'https' // Not required, but highly recommended to only allow https mentions
 };
@@ -73,9 +77,10 @@ An example storage handler can be found in the [local storage class](./src/class
 
 ### Functions
 The following functions must be implemented in your storage handler class if you are not using TypesScript.
-| Function | arguments | returns | async | explanation |
-| -------- | --------- | ------- | ----- | ----------- |
-| `addPendingMention` | mention: [QueuedMention](./src/types/queued-mention.type.ts) | [QueuedMention](./src/types/queued-mention.type.ts) | `true` | Allows the web mention handler to add a new pending mention that needs to be handled |
-| `getNextPendingMentions` | N/A | [QueuedMention](./src/types/queued-mention.type.ts)[] | `true` | Fetches a number of pending mentions to be bulk processed. Any configured limits on the number of pending mentions to fetch should be set in the constructor via an options object rather than passed in to this function directly. |
-| `getMentionsForPage` | page: `string`, type?: `string` | [Mention](./src/types/mention.type.ts)[] | `true` | Gets mentions based on a given target. Has an optional `type` parameter that allows mentions to be filtered on type. eg. Only Comments or Likes` |
-| `storeMentionForPage` | page: `string`, mention: [Mention](./src/types/mention.type.ts) | [Mention](./src/types/mention.type.ts) | `true` | This function will store a mention on the given target. If you need to access the type of the mention, you can find that on the `mention.type` property. |
+| Function | arguments | returns | explanation |
+| -------- | --------- | ------- | ----------- |
+| `addPendingMention` | mention: [QueuedMention](./src/types/queued-mention.type.ts) | Promise<[QueuedMention](./src/types/queued-mention.type.ts)> | Allows the web mention handler to add a new pending mention that needs to be handled |
+| `getNextPendingMentions` | N/A | Promise<[QueuedMention](./src/types/queued-mention.type.ts)[]> | Fetches a number of pending mentions to be bulk processed. Any configured limits on the number of pending mentions to fetch should be set in the constructor via an options object rather than passed in to this function directly. |
+| `getMentionsForPage` | page: `string`, type?: `string` | Promise<[Mention](./src/types/mention.type.ts)[]> | Gets mentions based on a given target. Has an optional `type` parameter that allows mentions to be filtered on type. eg. Only Comments or Likes` |
+| `storeMentionForPage` | page: `string`, mention: [Mention](./src/types/mention.type.ts) | Promise<[Mention](./src/types/mention.type.ts)> | This function will store a mention on the given target. If you need to access the type of the mention, you can find that on the `mention.type` property. |
+| `deleteMention` | mention: [QueuedMention](./src/types/queued-mention.type.ts) | Promise<`null`> | This function should delete any processed mentions for a given target from a given source. It should always return `null` and should not error in the event that no mentions are found. |

@@ -3,22 +3,22 @@ import { Mention } from "@app/types/mention.type";
 import { QueuedMention } from "@app/types/queued-mention.type";
 
 export class LocalWebMentionStorage implements IWebMentionStorage {
-  private queue: QueuedMention[];
+  private queue: Set<QueuedMention>;
   private pages: {[page: string]: Mention[]}
 
   constructor() {
-    this.queue = [];
+    this.queue = new Set<QueuedMention>();
     this.pages = {};
   }
 
   async addPendingMention(mention: QueuedMention): Promise<QueuedMention> {
-    this.queue.push(mention);
-    return this.queue[this.queue.length - 1];
+    this.queue.add(mention);
+    return mention;
   }
 
   async getNextPendingMentions() {
-    const q = this.queue;
-    this.queue = [];
+    const q = [...this.queue.values()];
+    this.queue.clear();
     return q;
   }
 
@@ -31,7 +31,13 @@ export class LocalWebMentionStorage implements IWebMentionStorage {
 
   async storeMentionForPage(page: string, mention: Mention): Promise<Mention> {
     if(!this.pages[page]) this.pages[page] = [];
+    await this.deleteMention(mention); // delete any old versions of this mention
     this.pages[page].push(mention);
     return mention;
+  }
+
+  async deleteMention(mention: QueuedMention): Promise<null> {
+    this.pages[mention.target] = this.pages[mention.source].filter(({source}) => source !== mention.source);
+    return null;
   }
 }

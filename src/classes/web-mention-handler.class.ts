@@ -1,5 +1,6 @@
 import { fetchHtml } from "@app/functions/fetch-html.function";
 import { isUrl } from "@app/functions/is-url.function";
+import { parseHtml } from "@app/functions/parse-html.function";
 import { IWebMentionHandler } from "@app/interfaces/web-mention-handler.interface";
 import { IWebMentionStorage } from "@app/interfaces/web-mention-storage.interface";
 import { Mention } from "@app/types/mention.type";
@@ -77,9 +78,12 @@ export class WebMentionHandler implements IWebMentionHandler{
    * server
    */
   async processMention(mention: QueuedMention): Promise<Mention | null> {
-    const html = await fetchHtml(mention.source);
-    if(html === false) return null;
-
+    const {html, status, error} = await fetchHtml(mention.source);
+    // A status of 410 indicates that the webmention that previously existed was deleted
+    // If we got an error or there was no html body, then the source is invalid and
+    // we should delete any stored version of the webmention as per the specification
+    if(error || !html || status === 410) return this.storageHandler.deleteMention(mention);
+    const microformats = parseHtml(html, mention.source);
     return null;
   }
 

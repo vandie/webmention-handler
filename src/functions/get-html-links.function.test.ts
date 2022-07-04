@@ -7,14 +7,16 @@ describe('getHtmlLinks', () => {
       <section id="example"><p>this is a <a href="http://example.com">link</a></p></section>
       <a href="http://example.com/link2">link2</a>
       </div>
-      <a href="http://example.com/link3">link3</a>
+      <img href="http://example.com/link3">link3</img>
+      <video src="http://example.com/link4" />
       <a>Invalid a tag</a>
       </body></html>`;
 
     expect(getHtmlLinks(html)).toEqual([
       'http://example.com',
       'http://example.com/link2',
-      'http://example.com/link3'
+      'http://example.com/link3',
+      'http://example.com/link4'
     ])
   });
 
