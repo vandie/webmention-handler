@@ -84,15 +84,18 @@ export class WebMentionHandler implements IWebMentionHandler{
    */
   async processMention(mention: QueuedMention): Promise<Mention[] | null> {
     const {html, status, error} = await fetchHtml(mention.source);
+    // Delete exisiting webmentions with the current source and target to avoid duplication
+    await this.storageHandler.deleteMention(mention);
     // A status of 410 indicates that the webmention that previously existed was deleted
     // If we got an error or there was no html body, then the source is invalid and
-    // we should delete any stored version of the webmention as per the specification
-    if(error || !html || status === 410) return this.storageHandler.deleteMention(mention);
+    // we should delete any stored version of the webmention as per the specification without
+    // adding new ones
+    if(error || !html || status === 410) return null;
     const hEntries = parseHtml(html, mention.source, mention.target);
     let mentionedUrls = hEntries.find(({type}) => type && type.includes("mention-of"));
-    // If the page does not include any mention of the target, then delete any previously
-    // acknowledged mentions and retun null;
-    if(!mentionedUrls) return this.storageHandler.deleteMention(mention);
+    // If the page does not include any mention of the target, then we can return
+    // early as we have already deleted any stored mentions with this target and source
+    if(!mentionedUrls) return null;
 
     let mentions = hEntries.map(h => convertHEntryToMention(h, mention.source, mention.target));
     if(mentions.length > 1) mentions = mentions.filter(m => m.type !== 'mention');
