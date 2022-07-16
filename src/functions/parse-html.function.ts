@@ -2,7 +2,7 @@ import { parse as htmlParser } from 'node-html-parser';
 import { MicroformatRoot } from "microformats-parser/dist/types";
 import { getHEntries } from "./get-h-entries.function";
 import { getHtmlLinks } from "./get-html-links.function";
-import { flattenEntry } from './flatten-entry.function';
+import { normalizeEntry } from './normalize-entry.function';
 
 export function parseHtml(html: string, source: string, target: string): MicroformatRoot[] {
   const dom = htmlParser(html);
@@ -18,5 +18,5 @@ export function parseHtml(html: string, source: string, target: string): Microfo
   });
 
   // Return a more readable format
-  return items.map(flattenEntry)
+  return items.map(normalizeEntry)
 }
