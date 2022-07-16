@@ -1,4 +1,4 @@
-export type QueuedMention = {
+export type SimpleMention = {
   source: string;
   target: string;
 }

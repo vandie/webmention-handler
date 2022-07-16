@@ -5,7 +5,7 @@ import { parseHtml } from "../functions/parse-html.function";
 import { IWebMentionHandler } from "../interfaces/web-mention-handler.interface";
 import { IWebMentionStorage } from "../interfaces/web-mention-storage.interface";
 import { Mention } from "../types/mention.type";
-import { QueuedMention } from "../types/queued-mention.type";
+import { SimpleMention } from "../types/simple-mention.type";
 import { SuggestedResponse } from "../types/suggested-response.type";
 import { WebMentionOptions } from "../types/web-mention-options.type";
 import { LocalWebMentionStorage } from "./local-web-mention-storage.class";
@@ -82,7 +82,7 @@ export class WebMentionHandler implements IWebMentionHandler{
    * Converts a pending webmention to a set of parsed webmentions by fetching the information from the source
    * server
    */
-  async processMention(mention: QueuedMention): Promise<Mention[] | null> {
+  async processMention(mention: SimpleMention): Promise<Mention[] | null> {
     const {html, status, error} = await fetchHtml(mention.source);
     // Delete exisiting webmentions with the current source and target to avoid duplication
     await this.storageHandler.deleteMention(mention);
