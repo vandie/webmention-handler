@@ -1,5 +1,4 @@
 import { Mention } from "../types/mention.type";
-import { isOnlyOneEmoji } from "./is-single-emoji.function";
 
 export function convertHEntryToMention(entry: any, source: string, target: string): Mention {
   const mention: Mention = Object.assign({
@@ -14,9 +13,8 @@ export function convertHEntryToMention(entry: any, source: string, target: strin
   else if(mention['bookmark-of']) mention.type = 'bookmark';
 
   if(mention.type === 'reply' && mention.rsvp) mention.type = 'rsvp';
-  else if(mention.type === 'reply' && isOnlyOneEmoji(mention.content.value)) mention.type = 'reaction';
 
-  if(mention.type === 'mention-of') return { ...mention, type: 'mention' };
+  if(mention.type === 'mention-of' || !mention.type) return { ...mention, type: 'mention' };
 
   return mention;
 }

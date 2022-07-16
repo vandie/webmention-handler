@@ -1,17 +1,17 @@
 import { IWebMentionStorage } from "../interfaces/web-mention-storage.interface";
 import { Mention } from "../types/mention.type";
-import { QueuedMention } from "../types/queued-mention.type";
+import { SimpleMention } from "../types/simple-mention.type";
 
 export class LocalWebMentionStorage implements IWebMentionStorage {
-  private queue: Set<QueuedMention>;
+  private queue: Set<SimpleMention>;
   private pages: {[page: string]: Mention[]}
 
   constructor() {
-    this.queue = new Set<QueuedMention>();
+    this.queue = new Set<SimpleMention>();
     this.pages = {};
   }
 
-  async addPendingMention(mention: QueuedMention): Promise<QueuedMention> {
+  async addPendingMention(mention: SimpleMention): Promise<SimpleMention> {
     this.queue.add(mention);
     return mention;
   }
@@ -36,7 +36,7 @@ export class LocalWebMentionStorage implements IWebMentionStorage {
     return mention;
   }
 
-  async deleteMention(mention: QueuedMention): Promise<null> {
+  async deleteMention(mention: SimpleMention): Promise<null> {
     this.pages[mention.target] = this.pages[mention.source].filter(({source}) => source !== mention.source);
     return null;
   }

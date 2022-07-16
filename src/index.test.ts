@@ -1,3 +1,6 @@
 describe('example',() => {
-  it('works', () => expect(1).toEqual(1));
+  it('contains the expected exports', () => {
+    const exports = require('./index');
+    expect(Object.keys(exports)).toEqual(['WebMentionHandler'])
+  })
 })

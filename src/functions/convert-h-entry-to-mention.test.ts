@@ -99,4 +99,16 @@ describe('convertHEntryToMention', () => {
       target: 'http://example.com/note123'
     }));
   })
+
+  it('correctly creates a mention', () => {
+    const testHtml = fs.readFileSync(path.join(__dirname, '../test-data/html-mention.html'), 'utf8');
+    const hEntries = parseHtml(testHtml, 'http://example.com', 'http://example.com/note123');
+    const repost = convertHEntryToMention(hEntries[0], 'http://example.com', 'http://example.com/note123');
+    expect(repost).toEqual(expect.objectContaining({
+      ...hEntries[0],
+      type: 'mention',
+      source: 'http://example.com',
+      target: 'http://example.com/note123'
+    }));
+  });
 })
