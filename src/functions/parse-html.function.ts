@@ -4,7 +4,7 @@ import { getHEntries } from "./get-h-entries.function";
 import { getHtmlLinks } from "./get-html-links.function";
 import { normalizeEntry } from './normalize-entry.function';
 
-export function parseHtml(html: string, source: string, target: string): MicroformatRoot[] {
+export function parseHtml(html: string, source: string, target: string): any[] {
   const dom = htmlParser(html);
   const urls = getHtmlLinks(dom);
   const items = getHEntries(dom, source, target);

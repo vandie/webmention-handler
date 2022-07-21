@@ -1,3 +1,4 @@
+import { normalizeAuthors } from "../functions/normalize-authors.function";
 import { convertHEntryToMention } from "../functions/convert-h-entry-to-mention";
 import { fetchHtml } from "../functions/fetch-html.function";
 import { isUrl } from "../functions/is-url.function";
@@ -96,6 +97,13 @@ export class WebMentionHandler implements IWebMentionHandler{
     // If the page does not include any mention of the target, then we can return
     // early as we have already deleted any stored mentions with this target and source
     if(!mentionedUrls) return null;
+
+    // Not every post has an author, some pages also have authors on a
+    // seperate page, as such we should normalize it a local author if possible
+    await Promise.all(hEntries.map(async (entry, index) => {
+      if(!entry.author) return;
+      hEntries[index].author = await normalizeAuthors(entry);
+    }))
 
     let mentions = hEntries.map(h => convertHEntryToMention(h, mention.source, mention.target));
     // if there are only basic mentions, use the first (most complete mention)
