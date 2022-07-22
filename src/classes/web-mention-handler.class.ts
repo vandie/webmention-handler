@@ -102,7 +102,7 @@ export class WebMentionHandler implements IWebMentionHandler{
     // seperate page, as such we should normalize it a local author if possible
     await Promise.all(hEntries.map(async (entry, index) => {
       if(!entry.author) return;
-      hEntries[index].author = await normalizeAuthors(entry);
+      hEntries[index].author = await normalizeAuthors(entry.author);
     }))
 
     let mentions = hEntries.map(h => convertHEntryToMention(h, mention.source, mention.target));
