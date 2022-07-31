@@ -87,3 +87,8 @@ The following functions must be implemented in your storage handler class if you
 | `getMentionsForPage` | page: `string`, type?: `string` | Promise<[Mention](./src/types/mention.type.ts)[]> | Gets mentions based on a given target. Has an optional `type` parameter that allows mentions to be filtered on type. eg. Only Comments or Likes` |
 | `storeMentionForPage` | page: `string`, mention: [Mention](./src/types/mention.type.ts) | Promise<[Mention](./src/types/mention.type.ts)> | This function will store a mention on the given target. If you need to access the type of the mention, you can find that on the `mention.type` property. |
 | `deleteMention` | mention: [SimpleMention](./src/types/simple-mention.type.ts) | Promise<`null`> | This function should delete any processed mentions for a given target from a given source. It should always return `null` and should not error in the event that no mentions are found. |
+
+## Available Storage Libraries
+| Database/Storage Engine | Github Repo | NPM Package |
+| ----------------------- | ----------- | ----------- |
+| MongoDB | [vandie/webmention-handler-mongo](https://github.com/vandie/webmention-handler-mongo) | [webmention-handler-mongodb](https://www.npmjs.com/package/webmention-handler-mongodb) |
