@@ -5,7 +5,7 @@ export type Quote = Mention & {
   'type': 'quote'
   'quotation-of': Citation | string
   'content': {
-    html: string;
+    html?: string;
     value: string;
   }
 }
