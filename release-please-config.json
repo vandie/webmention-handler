@@ -1,8 +1,9 @@
 {
   "bootstrap-sha": "0284a34dfd2f8f44cd416a0c1870543849269925",
   "last-release-sha": "0284a34dfd2f8f44cd416a0c1870543849269925",
+  "include-v-in-tag": true,
   "packages": {
-    "/": {
+    ".": {
       "release-type": "node",
       "package-name": "webmention-handler"
     }
