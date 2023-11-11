@@ -3,3 +3,4 @@ export * from "./interfaces/web-mention-storage.interface";
 export * from "./types/mention.type";
 export * from "./types/simple-mention.type";
 export * from "./types/web-mention-options.type";
+export * from "./classes/local-web-mention-storage.class"
