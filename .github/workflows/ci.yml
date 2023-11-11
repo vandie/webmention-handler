@@ -1,0 +1,51 @@
+name: CI Pipeline
+
+on: ['push']
+
+jobs:
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x, 20.x]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm ci
+        name: Install Dependancies
+      - run: npm test
+        name: Run tests
+  release-please:
+    runs-on: ubuntu-latest
+    name: Release
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        name: Release Please
+        id: release
+        with:
+          release-type: node
+          package-name: webmention-handler
+      # The logic below handles the npm publication:
+      - uses: actions/checkout@v3
+        # these if statements ensure that a publication only occurs when
+        # a new release is created:
+        if: ${{ steps.release.outputs.release_created }}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 18
+          registry-url: 'https://registry.npmjs.org'
+        if: ${{ steps.release.outputs.release_created }}
+      - run: npm ci
+        name: Install Dependancies
+        if: ${{ steps.release.outputs.release_created }}
+      - run: npm run build
+        name: Build Release
+      - run: npm publish --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+        if: ${{ steps.release.outputs.release_created }}
