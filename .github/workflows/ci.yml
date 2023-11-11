@@ -31,6 +31,7 @@ jobs:
         with:
           release-type: node
           package-name: webmention-handler
+          path: /
       # The logic below handles the npm publication:
       - uses: actions/checkout@v3
         # these if statements ensure that a publication only occurs when
@@ -45,6 +46,7 @@ jobs:
         name: Install Dependancies
         if: ${{ steps.release.outputs.release_created }}
       - run: npm run build
+        if: ${{ steps.release.outputs.release_created }}
         name: Build Release
       - run: npm publish --access=public
         env:
