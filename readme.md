@@ -2,7 +2,7 @@
 
 `webmention-handler` is a Node.js handler for the 2017 W3C Recomendation Spec of [Webmention](https://www.w3.org/TR/webmention/). It is written in TypeScript and includes full type definitions.
 
-[![Test Suite](https://github.com/vandie/webmention-handler/actions/workflows/test.yml/badge.svg)](https://github.com/vandie/webmention-handler/actions/workflows/test.yml)
+[![CI Pipeline](https://github.com/vandie/webmention-handler/actions/workflows/ci.yml/badge.svg)](https://github.com/vandie/webmention-handler/actions/workflows/ci.yml)
 
 ## What is a webmention
 
